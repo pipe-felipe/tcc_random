@@ -4,7 +4,7 @@ Content-Type: application/json
 
 {
   "name": "John Doe",
-  "document": "123456709"
+  "document": "1"
 }
 
 ### R Read
@@ -12,13 +12,14 @@ GET http://localhost:8080/customer
 Content-Type: application/json
 
 ### U Update
-PUT http://localhost:8080/customers
+PUT http://localhost:8080/customer/122
 Content-Type: application/json
 
 {
-  "name": "John Doe"
+  "name": "Meu amor",
+  "document": "1"
 }
 
 ### D Delete
-DELETE http://localhost:8080/customers
+DELETE http://localhost:8080/customer/122
 Content-Type: application/json
