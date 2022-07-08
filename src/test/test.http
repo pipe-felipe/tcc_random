@@ -1,0 +1,24 @@
+### C Create
+POST http://localhost:8080/customer
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "document": "123456709"
+}
+
+### R Read
+GET http://localhost:8080/customer
+Content-Type: application/json
+
+### U Update
+PUT http://localhost:8080/customers
+Content-Type: application/json
+
+{
+  "name": "John Doe"
+}
+
+### D Delete
+DELETE http://localhost:8080/customers
+Content-Type: application/json
