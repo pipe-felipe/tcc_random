@@ -1,4 +1,4 @@
-package tcc.tcc_random
+package tcc.random
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication

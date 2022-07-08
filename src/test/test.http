@@ -1,17 +1,18 @@
 ### C Create
-POST http://localhost:8080/consumer
+POST http://localhost:8080/customer
 Content-Type: application/json
 
 {
-  "name": "John Doe"
+  "name": "John Doe",
+  "document": "123456709"
 }
 
 ### R Read
-GET http://localhost:8080/consumers
+GET http://localhost:8080/customer
 Content-Type: application/json
 
 ### U Update
-PUT http://localhost:8080/consumers
+PUT http://localhost:8080/customers
 Content-Type: application/json
 
 {
@@ -19,5 +20,5 @@ Content-Type: application/json
 }
 
 ### D Delete
-DELETE http://localhost:8080/consumers
+DELETE http://localhost:8080/customers
 Content-Type: application/json
