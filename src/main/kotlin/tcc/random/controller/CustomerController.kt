@@ -1,6 +1,7 @@
 package tcc.random.controller
 
 import org.springframework.http.ResponseEntity
+import org.springframework.stereotype.Repository
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -11,10 +12,11 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 import tcc.random.models.Customer
 import tcc.random.repositories.CustomerRepository
+import tcc.random.services.CustomerService
 
 @RestController
 @RequestMapping("customer")
-class CustomerController(val repository: CustomerRepository) {
+class CustomerController(val repository: CustomerRepository, val service: CustomerService) {
 
     @PostMapping
     fun createConsumer(@RequestBody customer: Customer) = ResponseEntity.ok(repository.save(customer))
