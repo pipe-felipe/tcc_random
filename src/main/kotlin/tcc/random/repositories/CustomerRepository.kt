@@ -9,4 +9,5 @@ import java.util.Optional
 interface CustomerRepository : MongoRepository<Customer, String> {
 
     fun findByDocument(document: String): Optional<Customer>
+    fun existsByDocument(document: String): Boolean
 }
