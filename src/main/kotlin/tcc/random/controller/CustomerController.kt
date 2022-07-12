@@ -4,11 +4,12 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tcc.random.models.Customer
 import tcc.random.repositories.CustomerRepository
+import tcc.random.services.CustomerService
 
 @RestController
 @RequestMapping("customer")
 class CustomerController(
-    val repository: CustomerRepository
+    val repository: CustomerRepository,
 ) {
 
     @PostMapping
