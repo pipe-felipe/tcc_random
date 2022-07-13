@@ -8,13 +8,14 @@ import tcc.random.repositories.CustomerRepository
 @RestController
 @RequestMapping("customer")
 class CustomerController(
-    val repository: CustomerRepository
+    val repository: CustomerRepository,
 ) {
 
     @PostMapping
-    fun createConsumer(@RequestBody customer: Customer) =
-        ResponseEntity
-            .ok(repository.save(customer))
+    fun createConsumer(@RequestBody customer: Customer) {
+        customer.birthDate?.let { customer.defineAge(it) }
+        ResponseEntity.ok(repository.save(customer))
+    }
 
     @GetMapping
     fun readConsumers() = ResponseEntity
