@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tcc.random.models.Customer
 import tcc.random.repositories.CustomerRepository
-import tcc.random.services.CustomerService
 
 @RestController
 @RequestMapping("customer")
@@ -13,9 +12,10 @@ class CustomerController(
 ) {
 
     @PostMapping
-    fun createConsumer(@RequestBody customer: Customer) =
-        ResponseEntity
-            .ok(repository.save(customer))
+    fun createConsumer(@RequestBody customer: Customer) {
+        customer.birthDate?.let { customer.defineAge(it) }
+        ResponseEntity.ok(repository.save(customer))
+    }
 
     @GetMapping
     fun readConsumers() = ResponseEntity
