@@ -9,7 +9,7 @@ import java.time.Period
 import java.util.*
 
 @Service
-class CustomerService (val repository: CustomerRepository) {
+class CustomerService(val repository: CustomerRepository) {
 
     fun updateCustomer(customer: Customer): ResponseEntity<Customer> {
         val customerDbOptional = repository.findByDocument(customer.document)

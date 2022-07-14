@@ -3,7 +3,7 @@ package tcc.random.models
 import org.springframework.data.mongodb.core.mapping.Document
 
 @Document
-data class Address (
+data class Address(
     val street: String?,
     val number: Int?,
     val city: String?,

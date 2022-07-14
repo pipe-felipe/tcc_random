@@ -6,10 +6,8 @@ import jakarta.validation.constraints.NotEmpty
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
-import tcc.random.repositories.CustomerRepository
 import tcc.random.services.CustomerService
-import java.time.LocalTime
-import java.util.Date
+import java.util.*
 
 @Document
 data class Customer(
@@ -32,11 +30,11 @@ data class Customer(
     val creditCard: CreditCard? = null,
     val address: Address? = null,
 
-    @JsonFormat(pattern="yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd")
     var birthDate: Date? = null,
     var age: Int? = null,
 
-    @JsonFormat(pattern="yyyy-MM-dd HH:mm:ss")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     val createdAt: Date? = Date(),
 
     val transactionValue: Double,
