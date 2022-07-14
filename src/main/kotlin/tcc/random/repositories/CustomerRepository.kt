@@ -10,4 +10,5 @@ interface CustomerRepository : MongoRepository<Customer, String> {
 
     fun findByDocument(document: String): Optional<Customer>
     fun existsByDocument(document: String): Boolean
+    fun existsByEmail(email: String): Boolean
 }
