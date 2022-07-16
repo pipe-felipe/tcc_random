@@ -1,0 +1,2 @@
+cors:
+  originPatterns: http://localhost:8080/consumer, http://localhost:5173/
