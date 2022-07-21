@@ -4,29 +4,26 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tcc.random.models.Customer
 import tcc.random.repositories.CustomerRepository
-import tcc.random.services.CustomerService
+import tcc.random.errors.ResourceNotFoundException
 
 @RestController
 @RequestMapping("customer")
 class CustomerController(
     val repository: CustomerRepository,
-    val service: CustomerService
 ) {
 
     @PostMapping
-    fun customerTransaction(@RequestBody customer: Customer) {
-
-        if ((repository.existsByDocument(customer.document) && !repository.existsByEmail(customer.email))
-            || (!repository.existsByDocument(customer.document) && repository.existsByEmail(customer.email))
-        ) {
-            throw IllegalArgumentException("The user ${customer.document} and ${customer.email} did not match")
+    fun createCustomer(@RequestBody customer: Customer) {
+        repository.existsByDocument(customer.document).let {
+            if (it) {
+                throw ResourceNotFoundException("This ${customer.document} already exists")
+            }
         }
-
-        if (repository.existsByDocument(customer.document)) {
-            service.updateCustomer(customer)
-            return
+        repository.existsByEmail(customer.email).let {
+            if (it) {
+                throw ResourceNotFoundException("This ${customer.email} already exists")
+            }
         }
-
         customer.birthDate?.let { customer.defineAge(it) }
         ResponseEntity.ok(repository.save(customer))
     }
@@ -38,6 +35,18 @@ class CustomerController(
     fun updateConsumer(
         @PathVariable document: String, @RequestBody customer: Customer
     ): ResponseEntity<Customer> {
+
+//        if ((repository.existsByDocument(customer.document) && !repository.existsByEmail(customer.email))
+//            || (!repository.existsByDocument(customer.document) && repository.existsByEmail(customer.email))
+//        ) {
+//            throw IllegalArgumentException("The user ${customer.document} and ${customer.email} did not match")
+//        }
+//
+//        if (repository.existsByDocument(customer.document)) {
+//            service.updateCustomer(customer)
+//            return
+//        }
+
         val customerDbOptional = repository.findByDocument(document)
         val toSave = customerDbOptional
             .orElseThrow { RuntimeException("Customer document: $document not found") }
