@@ -45,11 +45,7 @@ class CustomerService(val repository: CustomerRepository) {
         }
         return false
     }
-
-    fun allTransactionHandler(allTransactions: MutableList<Double>, customer: Customer){
-        val cu = allTransactions.add(customer.transactionValue)
-        println(cu)
-    }
+    
     companion object {
         fun calculateCustomerAge(birthDate: Date): Int {
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Brazil"))
