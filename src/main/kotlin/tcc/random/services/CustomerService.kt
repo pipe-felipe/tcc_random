@@ -1,6 +1,5 @@
 package tcc.random.services
 
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import tcc.random.models.Customer
 import tcc.random.repositories.CustomerRepository
@@ -10,24 +9,7 @@ import java.util.*
 
 @Service
 class CustomerService(val repository: CustomerRepository) {
-
-    fun updateCustomer(customer: Customer): ResponseEntity<Customer> {
-        val customerDbOptional = repository.findByDocument(customer.document)
-
-        val transactionHandle = customerDbOptional.get().allTransactions
-        if (transactionHandle != null) {
-            customer.transactionValue.let { transactionHandle.add(it) }
-        }
-
-        val toSave = customerDbOptional
-            .orElseThrow { RuntimeException("Customer document: ${customer.document} not found") }
-            .copy(
-                transactionValue = customer.transactionValue,
-                allTransactions = transactionHandle
-            )
-        return ResponseEntity.ok(repository.save(toSave))
-    }
-
+    
     fun allTransactionsHandler(optional: Optional<Customer>, customer: Customer): MutableList<Double>? {
         val transactionsUpgrade = optional.get().allTransactions
 
@@ -45,7 +27,7 @@ class CustomerService(val repository: CustomerRepository) {
         }
         return false
     }
-    
+
     companion object {
         fun calculateCustomerAge(birthDate: Date): Int {
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Brazil"))
