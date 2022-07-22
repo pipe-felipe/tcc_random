@@ -48,7 +48,7 @@ class CustomerController(
 
         val customerToUpdate = repository.findByDocument(document)
 
-        val toSave = customerToUpdate.orElseThrow{ CustomerNotFound("This $document does not exists") }.copy(
+        val toSave = customerToUpdate.orElseThrow { CustomerNotFound("This $document does not exists") }.copy(
             name = customer.name,
             transactionCount = customerToUpdate.get().transactionCount?.plus(1),
             allTransactions = service.allTransactionsHandler(customerToUpdate, customer)
