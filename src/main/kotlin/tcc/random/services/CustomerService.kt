@@ -13,10 +13,6 @@ class CustomerService(val repository: CustomerRepository) {
 
     fun updateCustomer(customer: Customer): ResponseEntity<Customer> {
         val customerDbOptional = repository.findByDocument(customer.document)
-        val upgradedTransaction = customerDbOptional
-            .get()
-            .transactionCount
-            .plus(1)
 
         val transactionHandle = customerDbOptional.get().allTransactions
         if (transactionHandle != null) {
@@ -27,12 +23,33 @@ class CustomerService(val repository: CustomerRepository) {
             .orElseThrow { RuntimeException("Customer document: ${customer.document} not found") }
             .copy(
                 transactionValue = customer.transactionValue,
-                transactionCount = upgradedTransaction,
                 allTransactions = transactionHandle
             )
         return ResponseEntity.ok(repository.save(toSave))
     }
 
+    fun allTransactionsHandler(optional: Optional<Customer>, customer: Customer): MutableList<Double>? {
+        val transactionsUpgrade = optional.get().allTransactions
+
+        if (transactionsUpgrade != null) {
+            customer.transactionValue.let { transactionsUpgrade.add(it) }
+        }
+        return transactionsUpgrade
+    }
+
+    fun customerEmailHandler(document: String, customer: Customer): Boolean {
+        val customerToUpdateDocument = repository.findByDocument(document)
+        val customerToUpdateEmail = repository.findByEmail(customer.email)
+        if (customerToUpdateDocument.get().id != customerToUpdateEmail.get().id) {
+            return true
+        }
+        return false
+    }
+
+    fun allTransactionHandler(allTransactions: MutableList<Double>, customer: Customer){
+        val cu = allTransactions.add(customer.transactionValue)
+        println(cu)
+    }
     companion object {
         fun calculateCustomerAge(birthDate: Date): Int {
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Brazil"))

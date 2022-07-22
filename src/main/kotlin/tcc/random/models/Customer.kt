@@ -38,7 +38,7 @@ data class Customer(
     val createdAt: Date? = Date(),
 
     val transactionValue: Double,
-    var transactionCount: Int = 1,
+    var transactionCount: Int?,
 
     val allTransactions: MutableList<Double>? = mutableListOf(transactionValue)
 ) {

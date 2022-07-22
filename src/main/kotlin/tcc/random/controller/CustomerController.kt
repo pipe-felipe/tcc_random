@@ -2,29 +2,34 @@ package tcc.random.controller
 
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
+import tcc.random.errors.CustomerAlreadyExists
+import tcc.random.errors.CustomerAndEmailDidNotMatch
+import tcc.random.errors.CustomerNotFound
 import tcc.random.models.Customer
 import tcc.random.repositories.CustomerRepository
-import tcc.random.errors.ResourceNotFoundException
+import tcc.random.services.CustomerService
 
 @RestController
 @RequestMapping("customer")
 class CustomerController(
     val repository: CustomerRepository,
+    val service: CustomerService
 ) {
 
     @PostMapping
     fun createCustomer(@RequestBody customer: Customer) {
         repository.existsByDocument(customer.document).let {
             if (it) {
-                throw ResourceNotFoundException("This ${customer.document} already exists")
+                throw CustomerAlreadyExists("This ${customer.document} already exists")
             }
         }
         repository.existsByEmail(customer.email).let {
             if (it) {
-                throw ResourceNotFoundException("This ${customer.email} already exists")
+                throw CustomerAlreadyExists("This ${customer.email} already exists")
             }
         }
         customer.birthDate?.let { customer.defineAge(it) }
+        customer.transactionCount = 1
         ResponseEntity.ok(repository.save(customer))
     }
 
@@ -35,22 +40,19 @@ class CustomerController(
     fun updateConsumer(
         @PathVariable document: String, @RequestBody customer: Customer
     ): ResponseEntity<Customer> {
+        service.customerEmailHandler(document, customer).let {
+            if (it) {
+                throw CustomerAndEmailDidNotMatch("This ${customer.email} and ${customer.document} did not match")
+            }
+        }
 
-//        if ((repository.existsByDocument(customer.document) && !repository.existsByEmail(customer.email))
-//            || (!repository.existsByDocument(customer.document) && repository.existsByEmail(customer.email))
-//        ) {
-//            throw IllegalArgumentException("The user ${customer.document} and ${customer.email} did not match")
-//        }
-//
-//        if (repository.existsByDocument(customer.document)) {
-//            service.updateCustomer(customer)
-//            return
-//        }
+        val customerToUpdate = repository.findByDocument(document)
 
-        val customerDbOptional = repository.findByDocument(document)
-        val toSave = customerDbOptional
-            .orElseThrow { RuntimeException("Customer document: $document not found") }
-            .copy(name = customer.name)
+        val toSave = customerToUpdate.orElseThrow{ CustomerNotFound("This $document does not exists") }.copy(
+            name = customer.name,
+            transactionCount = customerToUpdate.get().transactionCount?.plus(1),
+            allTransactions = service.allTransactionsHandler(customerToUpdate, customer)
+        )
         return ResponseEntity.ok(repository.save(toSave))
     }
 
