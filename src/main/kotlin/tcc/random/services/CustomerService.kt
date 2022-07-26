@@ -1,6 +1,5 @@
 package tcc.random.services
 
-import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Service
 import tcc.random.models.Customer
 import tcc.random.repositories.CustomerRepository
@@ -10,27 +9,23 @@ import java.util.*
 
 @Service
 class CustomerService(val repository: CustomerRepository) {
+    
+    fun allTransactionsHandler(optional: Optional<Customer>, customer: Customer): MutableList<Double>? {
+        val transactionsUpgrade = optional.get().allTransactions
 
-    fun updateCustomer(customer: Customer): ResponseEntity<Customer> {
-        val customerDbOptional = repository.findByDocument(customer.document)
-        val upgradedTransaction = customerDbOptional
-            .get()
-            .transactionCount
-            .plus(1)
-
-        val transactionHandle = customerDbOptional.get().allTransactions
-        if (transactionHandle != null) {
-            customer.transactionValue.let { transactionHandle.add(it) }
+        if (transactionsUpgrade != null) {
+            customer.transactionValue.let { transactionsUpgrade.add(it) }
         }
+        return transactionsUpgrade
+    }
 
-        val toSave = customerDbOptional
-            .orElseThrow { RuntimeException("Customer document: ${customer.document} not found") }
-            .copy(
-                transactionValue = customer.transactionValue,
-                transactionCount = upgradedTransaction,
-                allTransactions = transactionHandle
-            )
-        return ResponseEntity.ok(repository.save(toSave))
+    fun customerEmailHandler(document: String, customer: Customer): Boolean {
+        val customerToUpdateDocument = repository.findByDocument(document)
+        val customerToUpdateEmail = repository.findByEmail(customer.email)
+        if (customerToUpdateDocument.get().id != customerToUpdateEmail.get().id) {
+            return true
+        }
+        return false
     }
 
     companion object {
