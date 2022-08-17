@@ -38,9 +38,10 @@ data class Customer(
     val createdAt: Date? = Date(),
 
     val transactionValue: Double,
-    var transactionCount: Int?,
+    var transactionCount: Int? = null,
 
-    val allTransactions: MutableList<Double>? = mutableListOf(transactionValue)
+    val allTransactions: MutableList<Double>? = mutableListOf(transactionValue),
+    var transactionStatus: String? = null
 ) {
     fun defineAge(birthDate: Date) {
         this.birthDate = birthDate
