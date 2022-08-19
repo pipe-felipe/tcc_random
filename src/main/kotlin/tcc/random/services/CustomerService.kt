@@ -1,15 +1,25 @@
 package tcc.random.services
 
+import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
+import tcc.random.errors.CustomerAlreadyExists
 import tcc.random.models.Customer
 import tcc.random.repositories.CustomerRepository
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.net.URI
+import java.net.URL
+import java.net.http.HttpClient
+import java.net.http.HttpRequest
+import java.net.http.HttpResponse
 import java.time.LocalDate
 import java.time.Period
 import java.util.*
 
+
 @Service
 class CustomerService(val repository: CustomerRepository) {
-    
+
     fun allTransactionsHandler(optional: Optional<Customer>, customer: Customer): MutableList<Double>? {
         val transactionsUpgrade = optional.get().allTransactions
 
@@ -28,6 +38,60 @@ class CustomerService(val repository: CustomerRepository) {
         return false
     }
 
+    fun newTransactionHandler(customer: Customer): Customer {
+        repository.existsByDocument(customer.document).let {
+            if (it) {
+                throw CustomerAlreadyExists("This document ${customer.document} already exists")
+            }
+        }
+        repository.existsByEmail(customer.email).let {
+            if (it) {
+                throw CustomerAlreadyExists("This email ${customer.email} already exists")
+            }
+        }
+        customer.birthDate?.let { customer.defineAge(it) }
+        customer.transactionCount = 1
+
+        return customer
+    }
+
+     suspend fun sendToRulesEngine(customer: Customer) {
+//        val url = URL("http://localhost:8082/engine/customer")
+//        val con = url.openConnection() as java.net.HttpURLConnection
+//        con.requestMethod = "POST"
+//        con.setRequestProperty("Content-Type", "application/json")
+//        con.doOutput = true
+//
+//        val jsonInputString = customer.toString()
+//
+//        con.outputStream.use { os ->
+//            val input = jsonInputString.toByteArray(charset("utf-8"))
+//            os.write(input, 0, input.size)
+//        }
+//
+//        BufferedReader(
+//                InputStreamReader(con.inputStream, "utf-8")).use { br ->
+//            val response = StringBuilder()
+//            var responseLine: String? = null
+//            while (br.readLine().also { responseLine = it } != null) {
+//                response.append(responseLine!!.trim { it <= ' ' })
+//            }
+//            println(response.toString())
+//        }
+
+        val objectMapper = ObjectMapper()
+        val requestBody: String = objectMapper.writeValueAsString(customer)
+        val client = HttpClient.newBuilder().build()
+        print(requestBody)
+
+        val request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8082/engine/customer"))
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build()
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString())
+        println(response.body())
+    }
+
     companion object {
         fun calculateCustomerAge(birthDate: Date): Int {
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Brazil"))
@@ -37,8 +101,8 @@ class CustomerService(val repository: CustomerRepository) {
             val day = calendar.get(Calendar.DAY_OF_MONTH)
 
             return Period.between(
-                LocalDate.of(year, month, day),
-                LocalDate.now()
+                    LocalDate.of(year, month, day),
+                    LocalDate.now()
             ).years
         }
     }

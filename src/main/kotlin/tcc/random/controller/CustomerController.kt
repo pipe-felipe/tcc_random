@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import tcc.random.errors.CustomerAlreadyExists
 import tcc.random.errors.CustomerAndEmailDidNotMatch
 import tcc.random.errors.CustomerNotFound
 import tcc.random.models.Customer
@@ -19,27 +18,21 @@ class CustomerController(
 ) {
 
     @PostMapping
-    fun createCustomer(@RequestBody customer: Customer) {
-        repository.existsByDocument(customer.document).let {
-            if (it) {
-                throw CustomerAlreadyExists("This document ${customer.document} already exists")
-            }
-        }
-        repository.existsByEmail(customer.email).let {
-            if (it) {
-                throw CustomerAlreadyExists("This email ${customer.email} already exists")
-            }
-        }
-        customer.birthDate?.let { customer.defineAge(it) }
-        customer.transactionCount = 1
-        ResponseEntity.ok(repository.save(customer))
+     fun saveTransactionalData(@RequestBody customer: Customer) {
+        val c = service.newTransactionHandler(customer)
+        service.sendToRulesEngine(c)
     }
 
+    @PostMapping("/engine")
+    fun retrieveTransactionalData(@RequestBody customer: Customer) =
+            ResponseEntity.ok(repository.save(customer))
+
     @GetMapping
-    fun readConsumers(page: Pageable): ResponseEntity<Page<Customer>> = ResponseEntity.ok(repository.findAll(page))
+    fun readTransactionalData(page: Pageable): ResponseEntity<Page<Customer>> =
+            ResponseEntity.ok(repository.findAll(page))
 
     @PutMapping("{document}")
-    fun updateConsumer(
+    fun updateTransactionalData(
         @PathVariable document: String, @RequestBody customer: Customer
     ): ResponseEntity<Customer> {
         service.customerEmailHandler(document, customer).let {
@@ -61,6 +54,6 @@ class CustomerController(
     }
 
     @DeleteMapping("{document}")
-    fun deleteCustomer(@PathVariable document: String) =
+    fun deleteTransaction(@PathVariable document: String) =
         repository.findByDocument(document).ifPresent { repository.delete(it) }
 }
