@@ -13,6 +13,12 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/public/p/ktor/eap")
+    }
+    maven {
+        url = uri("https://maven.pkg.jetbrains.space/kotlin/p/kotlin/dev")
+    }
 }
 
 dependencies {
@@ -24,6 +30,8 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
+    implementation("io.ktor:ktor-server-core:2.1.0")
+    implementation("io.ktor:ktor-server-netty:2.1.0")
 }
 
 tasks.withType<KotlinCompile> {
