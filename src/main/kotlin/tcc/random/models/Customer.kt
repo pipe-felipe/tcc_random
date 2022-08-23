@@ -34,9 +34,6 @@ data class Customer(
     var birthDate: Date? = null,
     var age: Int? = null,
 
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    val createdAt: Date? = Date(),
-
     val transactionValue: Double,
     var transactionCount: Int? = null,
 
