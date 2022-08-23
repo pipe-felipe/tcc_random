@@ -20,7 +20,7 @@ class CustomerController(
     @PostMapping
      fun saveTransactionalData(@RequestBody customer: Customer) {
         val c = service.newTransactionHandler(customer)
-        service.sendToRulesEngine(c)
+        service.sendToRulesEngine2(c)
     }
 
     @PostMapping("/engine")
