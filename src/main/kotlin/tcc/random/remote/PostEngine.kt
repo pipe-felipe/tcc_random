@@ -1,8 +1,8 @@
 package tcc.random.remote
 
+import tcc.random.models.Customer
 import tcc.random.remote.dto.EngineRequest
-import tcc.random.remote.dto.EngineResponse
 
 interface PostEngine {
-    suspend fun sendToEngine(engineRequest: EngineRequest): EngineResponse?
+    suspend fun sendToEngine()
 }

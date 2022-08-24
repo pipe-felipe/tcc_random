@@ -7,15 +7,15 @@ import java.util.*
 
 @JsonSerializableSchema
 data class EngineRequest(
-    val id: String?,
-    val name: String,
-    val email: String,
-    val document: String,
-    val creditCard: CreditCard?,
-    val address: Address?,
+    var id: String?,
+    var name: String,
+    var email: String,
+    var document: String,
+    var creditCard: CreditCard?,
+    var address: Address?,
     var birthDate: Date?,
     var age: Int?,
-    val transactionValue: Double,
+    var transactionValue: Double,
     var transactionCount: Int?,
-    val allTransactions: MutableList<Double>? = mutableListOf(transactionValue),
+    var allTransactions: MutableList<Double>? = mutableListOf(transactionValue),
 )

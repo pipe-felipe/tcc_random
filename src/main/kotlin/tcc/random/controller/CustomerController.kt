@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.*
 import tcc.random.errors.CustomerAndEmailDidNotMatch
 import tcc.random.errors.CustomerNotFound
 import tcc.random.models.Customer
+import tcc.random.remote.PostEngineImpl
 import tcc.random.repositories.CustomerRepository
 import tcc.random.services.CustomerService
 
@@ -14,22 +15,26 @@ import tcc.random.services.CustomerService
 @RequestMapping("customer")
 class CustomerController(
     val repository: CustomerRepository,
-    val service: CustomerService
+    val service: CustomerService,
 ) {
 
     @PostMapping
-     fun saveTransactionalData(@RequestBody customer: Customer) {
+    fun saveTransactionalData(@RequestBody customer: Customer) {
         val c = service.newTransactionHandler(customer)
-        service.sendToRulesEngine2(c)
+        val postEngineImpl = PostEngineImpl(c)
+        print(postEngineImpl.toString())
+//        launch {
+//            postEngineImpl.sendToEngine()
+//        }
     }
 
     @PostMapping("/engine")
     fun retrieveTransactionalData(@RequestBody customer: Customer) =
-            ResponseEntity.ok(repository.save(customer))
+        ResponseEntity.ok(repository.save(customer))
 
     @GetMapping
     fun readTransactionalData(page: Pageable): ResponseEntity<Page<Customer>> =
-            ResponseEntity.ok(repository.findAll(page))
+        ResponseEntity.ok(repository.findAll(page))
 
     @PutMapping("{document}")
     fun updateTransactionalData(
