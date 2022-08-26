@@ -15,6 +15,8 @@ repositories {
     mavenCentral()
 }
 
+val apacheHttpComponentVersion = "4.5.13"
+
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -24,6 +26,7 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
+    implementation("org.apache.httpcomponents:httpclient:$apacheHttpComponentVersion")
 }
 
 tasks.withType<KotlinCompile> {

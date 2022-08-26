@@ -18,4 +18,6 @@ data class EngineRequest(
     var transactionValue: Double,
     var transactionCount: Int?,
     var allTransactions: MutableList<Double>? = mutableListOf(transactionValue),
-)
+) {
+    companion object
+}

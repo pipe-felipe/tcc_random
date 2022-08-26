@@ -1,18 +1,10 @@
 package tcc.random.services
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import org.springframework.stereotype.Service
 import tcc.random.errors.CustomerAlreadyExists
 import tcc.random.models.Customer
+import tcc.random.remote.dto.EngineRequest
 import tcc.random.repositories.CustomerRepository
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.HttpURLConnection
-import java.net.URI
-import java.net.URL
-import java.net.http.HttpClient
-import java.net.http.HttpRequest
-import java.net.http.HttpResponse
 import java.time.LocalDate
 import java.time.Period
 import java.util.*
@@ -65,8 +57,8 @@ class CustomerService(val repository: CustomerRepository) {
             val day = calendar.get(Calendar.DAY_OF_MONTH)
 
             return Period.between(
-                LocalDate.of(year, month, day),
-                LocalDate.now()
+                    LocalDate.of(year, month, day),
+                    LocalDate.now()
             ).years
         }
     }
