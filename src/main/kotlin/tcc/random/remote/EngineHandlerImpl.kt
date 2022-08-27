@@ -13,11 +13,11 @@ class EngineHandlerImpl : EngineHandler {
 
     override fun sendToEngine(engineRequest: EngineRequest) {
         val entity = StringEntity(engineRequest.toString(),
-                ContentType.APPLICATION_FORM_URLENCODED)
+                ContentType.APPLICATION_JSON)
 
         val httpClient: HttpClient = HttpClientBuilder.create().build()
         val request = HttpPost("http://localhost:8082/engine/customer")
-        request.entity = entity;
+        request.entity = entity
 
         val response: HttpResponse = httpClient.execute(request)
         println(response.statusLine.statusCode)

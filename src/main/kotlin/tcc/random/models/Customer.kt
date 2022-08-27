@@ -22,6 +22,7 @@ data class Customer(
         "\"^[\\\\w!#\$%&'*+/=?`{|}~^-]+(?:\\\\.[\\\\w!#\$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\\\.)+[a-zA-Z]{2,6}\$\""
     )
     @NotEmpty(message = "Email cannot be empty")
+    @Indexed(unique = true)
     val email: String,
 
     @Indexed(unique = true)

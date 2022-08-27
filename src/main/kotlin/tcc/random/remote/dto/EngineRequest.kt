@@ -7,7 +7,6 @@ import java.util.*
 
 @JsonSerializableSchema
 data class EngineRequest(
-    var id: String?,
     var name: String,
     var email: String,
     var document: String,

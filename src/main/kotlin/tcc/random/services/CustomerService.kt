@@ -3,7 +3,6 @@ package tcc.random.services
 import org.springframework.stereotype.Service
 import tcc.random.errors.CustomerAlreadyExists
 import tcc.random.models.Customer
-import tcc.random.remote.dto.EngineRequest
 import tcc.random.repositories.CustomerRepository
 import java.time.LocalDate
 import java.time.Period

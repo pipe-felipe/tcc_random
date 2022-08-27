@@ -23,7 +23,6 @@ class CustomerController(
     fun createTransactionalData(@RequestBody customer: Customer) {
         val c = service.newTransactionHandler(customer)
         val request = EngineRequest(
-                id = c.id,
                 name = c.name,
                 email = c.email,
                 document = c.document,
