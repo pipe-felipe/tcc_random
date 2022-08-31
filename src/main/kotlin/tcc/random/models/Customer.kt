@@ -7,7 +7,6 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import tcc.random.services.CustomerService
-import java.util.*
 
 @Document
 data class Customer(
@@ -22,6 +21,7 @@ data class Customer(
         "\"^[\\\\w!#\$%&'*+/=?`{|}~^-]+(?:\\\\.[\\\\w!#\$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\\\.)+[a-zA-Z]{2,6}\$\""
     )
     @NotEmpty(message = "Email cannot be empty")
+    @Indexed(unique = true)
     val email: String,
 
     @Indexed(unique = true)
@@ -31,11 +31,8 @@ data class Customer(
     val address: Address? = null,
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    var birthDate: Date? = null,
+    var birthDate: String? = null,
     var age: Int? = null,
-
-    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    val createdAt: Date? = Date(),
 
     val transactionValue: Double,
     var transactionCount: Int? = null,
@@ -43,7 +40,7 @@ data class Customer(
     val allTransactions: MutableList<Double>? = mutableListOf(transactionValue),
     var transactionStatus: String? = null
 ) {
-    fun defineAge(birthDate: Date) {
+    fun defineAge(birthDate: String) {
         this.birthDate = birthDate
         this.age = CustomerService.calculateCustomerAge(birthDate)
     }

@@ -13,7 +13,11 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
     mavenCentral()
+    google()
 }
+
+val apacheHttpComponentVersion = "4.5.13"
+val gsonVersion = "2.9.0"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
@@ -24,6 +28,8 @@ dependencies {
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
+    implementation("org.apache.httpcomponents:httpclient:$apacheHttpComponentVersion")
+    implementation("com.google.code.gson:gson:$gsonVersion")
 }
 
 tasks.withType<KotlinCompile> {

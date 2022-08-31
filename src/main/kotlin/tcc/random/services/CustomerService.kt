@@ -1,15 +1,18 @@
 package tcc.random.services
 
 import org.springframework.stereotype.Service
+import tcc.random.errors.CustomerAlreadyExists
 import tcc.random.models.Customer
 import tcc.random.repositories.CustomerRepository
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
 import java.util.*
 
+
 @Service
 class CustomerService(val repository: CustomerRepository) {
-    
+
     fun allTransactionsHandler(optional: Optional<Customer>, customer: Customer): MutableList<Double>? {
         val transactionsUpgrade = optional.get().allTransactions
 
@@ -28,17 +31,35 @@ class CustomerService(val repository: CustomerRepository) {
         return false
     }
 
+    fun newTransactionHandler(customer: Customer): Customer {
+        repository.existsByDocument(customer.document).let {
+            if (it) {
+                throw CustomerAlreadyExists("This document ${customer.document} already exists")
+            }
+        }
+        repository.existsByEmail(customer.email).let {
+            if (it) {
+                throw CustomerAlreadyExists("This email ${customer.email} already exists")
+            }
+        }
+        customer.birthDate?.let { customer.defineAge(it) }
+        customer.transactionCount = 1
+
+        return customer
+    }
+
     companion object {
-        fun calculateCustomerAge(birthDate: Date): Int {
+        fun calculateCustomerAge(birthDate: String): Int {
+            val dateFromBirthDateString = SimpleDateFormat("yyyy-MM-dd").parse(birthDate)
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Brazil"))
-            calendar.time = birthDate
+            calendar.time = dateFromBirthDateString
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
             val day = calendar.get(Calendar.DAY_OF_MONTH)
 
             return Period.between(
-                LocalDate.of(year, month, day),
-                LocalDate.now()
+                    LocalDate.of(year, month, day),
+                    LocalDate.now()
             ).years
         }
     }
