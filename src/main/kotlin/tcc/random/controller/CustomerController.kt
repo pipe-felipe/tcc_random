@@ -39,8 +39,9 @@ class CustomerController(
     }
 
     @PostMapping("/engine")
-    fun retrieveTransactionalData(@RequestBody customer: Customer) =
-            ResponseEntity.ok(repository.save(customer))
+    fun retrieveTransactionalData(@RequestBody customer: Customer) {
+        ResponseEntity.ok(repository.save(customer))
+    }
 
     @GetMapping
     fun readTransactionalData(page: Pageable): ResponseEntity<Page<Customer>> =

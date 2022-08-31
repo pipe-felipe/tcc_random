@@ -11,7 +11,7 @@ data class EngineResponse(
     val document: String,
     val creditCard: CreditCard?,
     val address: Address?,
-    var birthDate: Date?,
+    var birthDate: String?,
     var age: Int?,
     val transactionValue: Double,
     var transactionCount: Int?,

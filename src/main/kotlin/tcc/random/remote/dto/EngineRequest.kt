@@ -12,7 +12,7 @@ data class EngineRequest(
     var document: String,
     var creditCard: CreditCard?,
     var address: Address?,
-    var birthDate: Date?,
+    var birthDate: String?,
     var age: Int?,
     var transactionValue: Double,
     var transactionCount: Int?,

@@ -4,6 +4,7 @@ import org.springframework.stereotype.Service
 import tcc.random.errors.CustomerAlreadyExists
 import tcc.random.models.Customer
 import tcc.random.repositories.CustomerRepository
+import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.Period
 import java.util.*
@@ -48,9 +49,10 @@ class CustomerService(val repository: CustomerRepository) {
     }
 
     companion object {
-        fun calculateCustomerAge(birthDate: Date): Int {
+        fun calculateCustomerAge(birthDate: String): Int {
+            val dateFromBirthDateString = SimpleDateFormat("yyyy-MM-dd").parse(birthDate)
             val calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Brazil"))
-            calendar.time = birthDate
+            calendar.time = dateFromBirthDateString
             val year = calendar.get(Calendar.YEAR)
             val month = calendar.get(Calendar.MONTH)
             val day = calendar.get(Calendar.DAY_OF_MONTH)

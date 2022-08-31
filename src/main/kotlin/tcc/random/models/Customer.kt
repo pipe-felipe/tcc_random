@@ -7,7 +7,6 @@ import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
 import tcc.random.services.CustomerService
-import java.util.*
 
 @Document
 data class Customer(
@@ -32,7 +31,7 @@ data class Customer(
     val address: Address? = null,
 
     @JsonFormat(pattern = "yyyy-MM-dd")
-    var birthDate: Date? = null,
+    var birthDate: String? = null,
     var age: Int? = null,
 
     val transactionValue: Double,
@@ -41,7 +40,7 @@ data class Customer(
     val allTransactions: MutableList<Double>? = mutableListOf(transactionValue),
     var transactionStatus: String? = null
 ) {
-    fun defineAge(birthDate: Date) {
+    fun defineAge(birthDate: String) {
         this.birthDate = birthDate
         this.age = CustomerService.calculateCustomerAge(birthDate)
     }
