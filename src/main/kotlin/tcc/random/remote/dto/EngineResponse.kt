@@ -2,7 +2,6 @@ package tcc.random.remote.dto
 
 import tcc.random.models.Address
 import tcc.random.models.CreditCard
-import java.util.*
 
 data class EngineResponse(
     val id: String?,

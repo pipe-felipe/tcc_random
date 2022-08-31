@@ -16,7 +16,6 @@ class EngineHandlerImpl : EngineHandler {
 
         val gson = Gson()
         val jsonRequest = gson.toJson(engineRequest)
-        println("Aqui ó $jsonRequest")
 
         val entity = StringEntity(jsonRequest,
                 ContentType.APPLICATION_JSON)
