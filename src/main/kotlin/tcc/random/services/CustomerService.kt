@@ -42,9 +42,10 @@ class CustomerService(val repository: CustomerRepository) {
                 throw CustomerAlreadyExists("This email ${customer.email} already exists")
             }
         }
-        customer.birthDate?.let { customer.defineAge(it) }
+        if (customer.birthDate != null) {
+            customer.defineAge(customer.birthDate!!)
+        }
         customer.transactionCount = 1
-
         return customer
     }
 

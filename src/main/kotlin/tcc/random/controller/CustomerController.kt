@@ -7,8 +7,7 @@ import org.springframework.web.bind.annotation.*
 import tcc.random.errors.CustomerAndEmailDidNotMatch
 import tcc.random.errors.CustomerNotFound
 import tcc.random.models.Customer
-import tcc.random.remote.EngineHandlerImpl
-import tcc.random.remote.dto.EngineRequest
+import tcc.random.remote.EngineHandler
 import tcc.random.repositories.CustomerRepository
 import tcc.random.services.CustomerService
 
@@ -21,21 +20,7 @@ class CustomerController(
 
     @PostMapping
     fun createTransactionalData(@RequestBody customer: Customer) {
-        val c = service.newTransactionHandler(customer)
-        val request = EngineRequest(
-                name = c.name,
-                email = c.email,
-                document = c.document,
-                creditCard = c.creditCard,
-                address = c.address,
-                birthDate = c.birthDate,
-                age = c.age,
-                transactionValue = c.transactionValue,
-                transactionCount = c.transactionCount,
-                allTransactions = c.allTransactions
-        )
-        val engineHandler = EngineHandlerImpl()
-        engineHandler.sendToEngine(request)
+        service.newTransactionHandler(customer)
     }
 
     @PostMapping("/engine")
