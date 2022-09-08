@@ -7,20 +7,23 @@ import org.springframework.web.bind.annotation.*
 import tcc.random.errors.CustomerAndEmailDidNotMatch
 import tcc.random.errors.CustomerNotFound
 import tcc.random.models.Customer
-import tcc.random.remote.EngineHandler
 import tcc.random.repositories.CustomerRepository
-import tcc.random.services.CustomerService
+import tcc.random.handler.CustomerHandler
+import tcc.random.remote.TransacitonalRetriever
 
 @RestController
 @RequestMapping("customer")
 class CustomerController(
         val repository: CustomerRepository,
-        val service: CustomerService,
+        val service: CustomerHandler,
 ) {
 
     @PostMapping
     fun createTransactionalData(@RequestBody customer: Customer) {
+        val retriever = TransacitonalRetriever()
         service.newTransactionHandler(customer)
+        retriever.sendToEngine(customer)
+        println(customer)
     }
 
     @PostMapping("/engine")

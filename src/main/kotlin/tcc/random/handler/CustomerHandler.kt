@@ -1,4 +1,4 @@
-package tcc.random.services
+package tcc.random.handler
 
 import org.springframework.stereotype.Service
 import tcc.random.errors.CustomerAlreadyExists
@@ -11,7 +11,7 @@ import java.util.*
 
 
 @Service
-class CustomerService(val repository: CustomerRepository) {
+class CustomerHandler(val repository: CustomerRepository) {
 
     fun allTransactionsHandler(optional: Optional<Customer>, customer: Customer): MutableList<Double>? {
         val transactionsUpgrade = optional.get().allTransactions

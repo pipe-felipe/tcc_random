@@ -11,7 +11,7 @@ import tcc.random.models.Customer
 import tcc.random.remote.dto.CafeRequest
 
 
-class EngineHandler {
+class TransacitonalRetriever {
 
     fun sendToEngine(customer: Customer) {
 
@@ -26,7 +26,7 @@ class EngineHandler {
         )
 
         val gson = Gson()
-        val jsonRequest = gson.toJson(customer)
+        val jsonRequest = gson.toJson(cafeRequest)
 
         val entity = StringEntity(
             jsonRequest,
