@@ -35,7 +35,6 @@ class TransactionalRetriever {
     }
 
     fun sendToEngine(customer: Customer) {
-
         val httpClient: HttpClient = HttpClientBuilder.create().build()
         val request = HttpPost("http://localhost:8083/cafe")
         request.entity = createEntity(customer)
