@@ -13,4 +13,5 @@ data class CafeRequest(
     var address: Address?,
     var age: Int?,
     var transactionValue: Double,
+    var sentMethod: String?
 )

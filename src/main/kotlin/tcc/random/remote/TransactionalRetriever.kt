@@ -11,33 +11,37 @@ import tcc.random.models.Customer
 import tcc.random.remote.dto.CafeRequest
 
 
-class TransacitonalRetriever {
+class TransactionalRetriever {
 
-    fun sendToEngine(customer: Customer) {
-
+    private fun createEntity(customer: Customer): StringEntity {
         val cafeRequest = CafeRequest(
-            name = customer.name,
-            email = customer.email,
-            document = customer.document,
-            creditCard = customer.creditCard,
-            address = customer.address,
-            age = customer.age,
-            transactionValue = customer.transactionValue
+                name = customer.name,
+                email = customer.email,
+                document = customer.document,
+                creditCard = customer.creditCard,
+                address = customer.address,
+                age = customer.age,
+                transactionValue = customer.transactionValue,
+                sentMethod = customer.sentMethod
         )
 
         val gson = Gson()
         val jsonRequest = gson.toJson(cafeRequest)
 
-        val entity = StringEntity(
-            jsonRequest,
-            ContentType.APPLICATION_JSON
+        return StringEntity(
+                jsonRequest,
+                ContentType.APPLICATION_JSON
         )
+    }
+
+    fun sendToEngine(customer: Customer) {
 
         val httpClient: HttpClient = HttpClientBuilder.create().build()
         val request = HttpPost("http://localhost:8083/cafe")
-        request.entity = entity
+        request.entity = createEntity(customer)
 
         val response: HttpResponse = httpClient.execute(request)
         println(response.statusLine.statusCode)
+        response.entity = createEntity(customer)
     }
 }

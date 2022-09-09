@@ -6,28 +6,29 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tcc.random.errors.CustomerAndEmailDidNotMatch
 import tcc.random.errors.CustomerNotFound
-import tcc.random.models.Customer
-import tcc.random.repositories.CustomerRepository
 import tcc.random.handler.CustomerHandler
-import tcc.random.remote.TransacitonalRetriever
+import tcc.random.models.Customer
+import tcc.random.remote.TransactionalRetriever
+import tcc.random.repositories.CustomerRepository
 
 @RestController
 @RequestMapping("customer")
 class CustomerController(
         val repository: CustomerRepository,
-        val service: CustomerHandler,
+        val handler: CustomerHandler,
 ) {
 
     @PostMapping
     fun createTransactionalData(@RequestBody customer: Customer) {
-        val retriever = TransacitonalRetriever()
-        service.newTransactionHandler(customer)
+        val retriever = TransactionalRetriever()
+        handler.newTransactionHandler(customer)
+        customer.sentMethod = "POST"
         retriever.sendToEngine(customer)
-        println(customer)
     }
 
     @PostMapping("/engine")
     fun retrieveTransactionalData(@RequestBody customer: Customer) {
+        customer.transactionCount = 1
         ResponseEntity.ok(repository.save(customer))
     }
 
@@ -39,11 +40,10 @@ class CustomerController(
     fun updateTransactionalData(
             @PathVariable document: String, @RequestBody customer: Customer
     ): ResponseEntity<Customer> {
-        service.customerEmailHandler(document, customer).let {
-            if (it) {
-                throw CustomerAndEmailDidNotMatch("This ${customer.email} and ${customer.document} did not match")
-            }
+        if (handler.customerEmailHandler(document, customer)) {
+            throw CustomerAndEmailDidNotMatch("This ${customer.email} and ${customer.document} did not match")
         }
+
 
         val customerToUpdate = repository.findByDocument(document)
 
@@ -51,7 +51,7 @@ class CustomerController(
                 .copy(
                         name = customer.name,
                         transactionCount = customerToUpdate.get().transactionCount?.plus(1),
-                        allTransactions = service.allTransactionsHandler(customerToUpdate, customer),
+                        allTransactions = handler.allTransactionsHandler(customerToUpdate, customer),
                         transactionValue = customer.transactionValue
                 )
         return ResponseEntity.ok(repository.save(toSave))
