@@ -18,6 +18,10 @@ repositories {
 
 val apacheHttpComponentVersion = "4.5.13"
 val gsonVersion = "2.9.0"
+val caffeineVersion = "3.1.1"
+val guavaVersion = "3.1.1"
+val jcacheVersion = "3.1.1"
+val springStarterCache = "2.7.3"
 
 dependencies {
     implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
@@ -30,6 +34,13 @@ dependencies {
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     implementation("org.apache.httpcomponents:httpclient:$apacheHttpComponentVersion")
     implementation("com.google.code.gson:gson:$gsonVersion")
+
+    // Cache
+    implementation("org.springframework.boot:spring-boot-starter-cache:$springStarterCache")
+    implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
+    // optionals
+    implementation("com.github.ben-manes.caffeine:guava:$guavaVersion")
+    implementation("com.github.ben-manes.caffeine:jcache:$jcacheVersion")
 }
 
 tasks.withType<KotlinCompile> {

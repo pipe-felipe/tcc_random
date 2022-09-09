@@ -6,40 +6,29 @@ import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import tcc.random.errors.CustomerAndEmailDidNotMatch
 import tcc.random.errors.CustomerNotFound
+import tcc.random.handler.CustomerHandler
 import tcc.random.models.Customer
-import tcc.random.remote.EngineHandlerImpl
-import tcc.random.remote.dto.EngineRequest
+import tcc.random.remote.TransactionalRetriever
 import tcc.random.repositories.CustomerRepository
-import tcc.random.services.CustomerService
 
 @RestController
 @RequestMapping("customer")
 class CustomerController(
         val repository: CustomerRepository,
-        val service: CustomerService,
+        val handler: CustomerHandler,
 ) {
 
     @PostMapping
     fun createTransactionalData(@RequestBody customer: Customer) {
-        val c = service.newTransactionHandler(customer)
-        val request = EngineRequest(
-                name = c.name,
-                email = c.email,
-                document = c.document,
-                creditCard = c.creditCard,
-                address = c.address,
-                birthDate = c.birthDate,
-                age = c.age,
-                transactionValue = c.transactionValue,
-                transactionCount = c.transactionCount,
-                allTransactions = c.allTransactions
-        )
-        val engineHandler = EngineHandlerImpl()
-        engineHandler.sendToEngine(request)
+        val retriever = TransactionalRetriever()
+        handler.newTransactionHandler(customer)
+        customer.sentMethod = "POST"
+        retriever.sendToEngine(customer)
     }
 
     @PostMapping("/engine")
     fun retrieveTransactionalData(@RequestBody customer: Customer) {
+        customer.transactionCount = 1
         ResponseEntity.ok(repository.save(customer))
     }
 
@@ -51,11 +40,10 @@ class CustomerController(
     fun updateTransactionalData(
             @PathVariable document: String, @RequestBody customer: Customer
     ): ResponseEntity<Customer> {
-        service.customerEmailHandler(document, customer).let {
-            if (it) {
-                throw CustomerAndEmailDidNotMatch("This ${customer.email} and ${customer.document} did not match")
-            }
+        if (handler.customerEmailHandler(document, customer)) {
+            throw CustomerAndEmailDidNotMatch("This ${customer.email} and ${customer.document} did not match")
         }
+
 
         val customerToUpdate = repository.findByDocument(document)
 
@@ -63,7 +51,7 @@ class CustomerController(
                 .copy(
                         name = customer.name,
                         transactionCount = customerToUpdate.get().transactionCount?.plus(1),
-                        allTransactions = service.allTransactionsHandler(customerToUpdate, customer),
+                        allTransactions = handler.allTransactionsHandler(customerToUpdate, customer),
                         transactionValue = customer.transactionValue
                 )
         return ResponseEntity.ok(repository.save(toSave))

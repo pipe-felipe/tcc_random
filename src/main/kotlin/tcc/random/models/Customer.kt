@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotEmpty
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed
 import org.springframework.data.mongodb.core.mapping.Document
-import tcc.random.services.CustomerService
+import tcc.random.handler.CustomerHandler
 
 @Document
 data class Customer(
@@ -38,10 +38,11 @@ data class Customer(
     var transactionCount: Int? = null,
 
     val allTransactions: MutableList<Double>? = mutableListOf(transactionValue),
-    var transactionStatus: String? = null
+    var transactionStatus: String? = null,
+    var sentMethod: String? = null
 ) {
     fun defineAge(birthDate: String) {
         this.birthDate = birthDate
-        this.age = CustomerService.calculateCustomerAge(birthDate)
+        this.age = CustomerHandler.calculateCustomerAge(birthDate)
     }
 }
