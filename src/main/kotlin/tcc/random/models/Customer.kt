@@ -10,12 +10,12 @@ import tcc.random.handler.CustomerHandler
 
 @Document
 data class Customer(
-    @Id
+        @Id
     val id: String? = null,
 
-    val name: String,
+        var name: String,
 
-    @Email(
+        @Email(
         message = "Email is not valid",
         regexp =
         "\"^[\\\\w!#\$%&'*+/=?`{|}~^-]+(?:\\\\.[\\\\w!#\$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\\\.)+[a-zA-Z]{2,6}\$\""
@@ -24,23 +24,25 @@ data class Customer(
     @Indexed(unique = true)
     val email: String,
 
-    @Indexed(unique = true)
+        @Indexed(unique = true)
     val document: String,
 
-    val creditCard: CreditCard? = null,
-    val address: Address? = null,
+        val creditCard: CreditCard? = null,
+        val address: Address? = null,
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
+        @JsonFormat(pattern = "yyyy-MM-dd")
     var birthDate: String? = null,
-    var age: Int? = null,
+        var age: Int? = null,
 
-    val transactionValue: Double,
-    var transactionCount: Int? = null,
+        var transactionValue: Double,
+        var transactionCount: Int? = null,
 
-    val allTransactions: MutableList<Double>? = mutableListOf(transactionValue),
-    var transactionStatus: String? = null,
-    var sentMethod: String? = null,
-    var transactionMessage: String? = null
+        var allTransactions: MutableList<Double>? = mutableListOf(transactionValue),
+        var transactionStatus: String? = null,
+
+        var sentMethod: String? = null,
+
+        var transactionMessage: String? = null
 ) {
     fun defineAge(birthDate: String) {
         this.birthDate = birthDate

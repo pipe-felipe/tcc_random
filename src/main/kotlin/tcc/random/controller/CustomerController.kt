@@ -44,16 +44,20 @@ class CustomerController(
             throw CustomerAndEmailDidNotMatch("This ${customer.email} and ${customer.document} did not match")
         }
 
-
         val customerToUpdate = repository.findByDocument(document)
 
         val toSave = customerToUpdate.orElseThrow { CustomerNotFound("This Document: $document does not exists") }
-                .copy(
-                        name = customer.name,
-                        transactionCount = customerToUpdate.get().transactionCount?.plus(1),
-                        allTransactions = handler.allTransactionsHandler(customerToUpdate, customer),
-                        transactionValue = customer.transactionValue
-                )
+
+        val retriever = TransactionalRetriever()
+
+        toSave.sentMethod = "PUT"
+        retriever.sendToEngine(toSave)
+
+        toSave.name = customer.name
+        toSave.transactionCount = customerToUpdate.get().transactionCount?.plus(1)
+        toSave.allTransactions = handler.allTransactionsHandler(customerToUpdate, customer)
+        toSave.transactionValue = customer.transactionValue
+
         return ResponseEntity.ok(repository.save(toSave))
     }
 
