@@ -4,7 +4,6 @@ import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
-import tcc.random.errors.CustomerAndEmailDidNotMatch
 import tcc.random.errors.CustomerNotFound
 import tcc.random.handler.CustomerHandler
 import tcc.random.models.Customer
@@ -17,10 +16,10 @@ class CustomerController(
         val repository: CustomerRepository,
         val handler: CustomerHandler,
 ) {
+    val retriever = TransactionalRetriever()
 
     @PostMapping
     fun createTransactionalData(@RequestBody customer: Customer) {
-        val retriever = TransactionalRetriever()
         handler.newTransactionHandler(customer)
         customer.sentMethod = "POST"
         retriever.sendToEngine(customer)
@@ -37,31 +36,37 @@ class CustomerController(
             ResponseEntity.ok(repository.findAll(page))
 
     @PutMapping("{document}")
-    fun updateTransactionalData(
+    fun sendToUpdateTransactionalData(
             @PathVariable document: String, @RequestBody customer: Customer
-    ): ResponseEntity<Customer> {
-        if (handler.customerEmailHandler(document, customer)) {
-            throw CustomerAndEmailDidNotMatch("This ${customer.email} and ${customer.document} did not match")
-        }
-
+    ) {
         val customerToUpdate = repository.findByDocument(document)
-
         val toSave = customerToUpdate.orElseThrow { CustomerNotFound("This Document: $document does not exists") }
-
-        val retriever = TransactionalRetriever()
 
         toSave.sentMethod = "PUT"
         retriever.sendToEngine(toSave)
+    }
 
-        toSave.name = customer.name
-        toSave.transactionCount = customerToUpdate.get().transactionCount?.plus(1)
-        toSave.allTransactions = handler.allTransactionsHandler(customerToUpdate, customer)
-        toSave.transactionValue = customer.transactionValue
+    @PutMapping("/cafe/{document}")
+    fun updateTransactionalData(
+            @PathVariable document: String,
+            @RequestBody customer: Customer):
+            ResponseEntity<Customer> {
+        val customerToUpdate = repository.findByDocument(document)
+
+        val toSave = customerToUpdate.orElseThrow { CustomerNotFound("This Document: $document does not exists") }
+                .copy(
+                        name = customer.name,
+                        transactionCount = customerToUpdate.get().transactionCount?.plus(1),
+                        allTransactions = handler.allTransactionsHandler(customerToUpdate, customer),
+                        transactionValue = customer.transactionValue
+                )
 
         return ResponseEntity.ok(repository.save(toSave))
     }
 
+
     @DeleteMapping("{document}")
     fun deleteTransaction(@PathVariable document: String) =
             repository.findByDocument(document).ifPresent { repository.delete(it) }
+
 }
