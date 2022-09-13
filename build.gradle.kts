@@ -34,13 +34,6 @@ dependencies {
     testImplementation("de.flapdoodle.embed:de.flapdoodle.embed.mongo")
     implementation("org.apache.httpcomponents:httpclient:$apacheHttpComponentVersion")
     implementation("com.google.code.gson:gson:$gsonVersion")
-
-    // Cache
-    implementation("org.springframework.boot:spring-boot-starter-cache:$springStarterCache")
-    implementation("com.github.ben-manes.caffeine:caffeine:$caffeineVersion")
-    // optionals
-    implementation("com.github.ben-manes.caffeine:guava:$guavaVersion")
-    implementation("com.github.ben-manes.caffeine:jcache:$jcacheVersion")
 }
 
 tasks.withType<KotlinCompile> {

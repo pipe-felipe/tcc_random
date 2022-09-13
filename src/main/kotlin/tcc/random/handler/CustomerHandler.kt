@@ -22,15 +22,6 @@ class CustomerHandler(val repository: CustomerRepository) {
         return transactionsUpgrade
     }
 
-    fun customerEmailHandler(document: String, customer: Customer): Boolean {
-        val customerToUpdateDocument = repository.findByDocument(document)
-        val customerToUpdateEmail = repository.findByEmail(customer.email)
-        if (customerToUpdateDocument.get().id != customerToUpdateEmail.get().id) {
-            return true
-        }
-        return false
-    }
-
     fun newTransactionHandler(customer: Customer): Customer {
         repository.existsByDocument(customer.document).let {
             if (it) {
